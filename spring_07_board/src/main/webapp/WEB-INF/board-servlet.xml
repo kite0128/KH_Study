@@ -59,6 +59,19 @@
 		<property name="service" ref="service"/>
 	</bean>
 	
+	<!-- 파일 업로드 시작 -->
+	<!-- 첨부 파일의 임시기억장치 경로 설정 -->
+	<bean id="uploadDirResource" class="org.springframework.core.io.FileSystemResource">
+		<!-- <constructor-arg value="c:/temp"/>-->
+		<constructor-arg value="./src/main/webapp/files/"/>
+	</bean>
+	
+	<!-- 파일을 임시기억저장소에 저장한다. -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="uploadTempDir" ref="uploadDirResource"/>
+	</bean>
+	<!-- 파일 업로드 끝 -->
+	
 	<!-- [10] View 빈 선언 -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/"/>

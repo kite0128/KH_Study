@@ -20,26 +20,26 @@ public class BoardDaoImp implements BoardDAO {
 
 	@Override
 	public int count() {
-		
+
 		return sqlSession.selectOne("board.count");
 	}
 
 	@Override
 	public List<BoardDTO> list(PageDTO pv) {
-		
-		return sqlSession.selectList("board.list",pv);
+
+		return sqlSession.selectList("board.list", pv);
 	}
 
 	@Override
 	public void readCount(int num) {
-		// TODO Auto-generated method stub
+		sqlSession.update("board.readCount", num);
 
 	}
 
 	@Override
 	public BoardDTO content(int num) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return sqlSession.selectOne("board.content", num);
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class BoardDaoImp implements BoardDAO {
 
 	@Override
 	public void save(BoardDTO dto) {
-		// TODO Auto-generated method stub
+		sqlSession.insert("board.save",dto);
 
 	}
 

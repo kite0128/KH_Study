@@ -33,14 +33,14 @@ public class BoardServiceImp implements BoardService {
 
 	@Override
 	public void insertProcess(BoardDTO dto) {
-		// TODO Auto-generated method stub
+		dao.save(dto);
 
 	}
 
 	@Override
 	public BoardDTO contentProcess(int num) {
-		// TODO Auto-generated method stub
-		return null;
+		dao.readCount(num);
+		return dao.content(num);
 	}
 
 	@Override

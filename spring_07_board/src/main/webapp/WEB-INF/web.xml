@@ -41,6 +41,7 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+	<!-- sb확장자로 요청이 넘어 오면 servlet-name에 있는 것을 찾아서 실행하라 -->
 	<servlet-mapping>
 		<servlet-name>boardServlet</servlet-name>
 		<url-pattern>*.sb</url-pattern>
@@ -54,6 +55,7 @@
 		<url-pattern>*.jpg</url-pattern>
 	</servlet-mapping>
 
+<!-- 한글설정 -->
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

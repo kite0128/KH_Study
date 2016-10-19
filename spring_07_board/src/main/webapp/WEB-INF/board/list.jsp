@@ -8,6 +8,9 @@
 <title>Insert title here</title>
 </head>
 <body>
+	<form id="frm" method="get" action="write.sb">
+		<input type="submit" id="btnWrite" value="글쓰기"/>
+	</form>
 <div id="bodywrap">
 	<!-- 리스트 출력 -->
 	<table>
@@ -23,12 +26,14 @@
 			<tr>
 				<td>${dto.num}</td>
 				<td>
+				<c:url var="content" value="view.sb">
+					<c:param name="currentPage" value="${pv.currentPage}"/>
+					<c:param name="num" value="${dto.num}"/>
+				</c:url>
 				<c:if test="${dto.re_level!=0}">
 					<img src="images/level.gif" width="${20*dto.re_level}" height="15"/>
 					<img src="images/re.gif" />
-				</c:if>
-				${dto.subject}
-				</td>
+				</c:if><a href="${content}">${dto.subject}</a>	</td>
 				<td>${dto.writer}</td>
 				<td>${dto.readcount}</td>
 				
@@ -57,7 +62,7 @@
 	<c:forEach var="i" begin="${pv.startPage}" end="${pv.endPage}" step="1">
 		<span>${i}</span>
 	</c:forEach>
-	 --%>
+--%>
 </div>
 </body>
 </html>
