@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html >
 <html>
 <head>
@@ -14,7 +15,7 @@
 		$('#replay').bind('click', replayRun);
 		$('#update').bind('click', updateRun);
 		$('#delete').bind('click', deleteRun);
-	});
+	});	
 	
 	function listRun() {
 		/* var frm=document.getElementById("frm");
@@ -39,6 +40,12 @@
 	</script>
 </head>
 <body>
+<!-- 치환 변수 선언 -->
+<c:set var="cr" value="\r" scope="page"/>
+<c:set var="cn" value="\n" scope="page"/>
+<c:set var="crcn" value="\r\n" scope="page"/>
+<c:set var="br" value="<br/>" scope="page"/>
+
 <table border="1" width="80%">
 		<tr>
 			<th width="20%">글쓴이</th>
@@ -65,7 +72,9 @@
 		<tr>
 			<th>파일</th>
 			<td colspan="3"><c:if test="${!empty dto.upload}">
-					<a href="contentdownload.sb?file=${path}"> ${dto.upload}</a>
+					<a href="contentdownload.sb?num=${dto.num}">
+					 ${fn:substringAfter(dto.upload,"_")}
+					 </a>
 				</c:if> <c:if test="${empty dto.upload }">
 					<c:out value="첨부파일 없음" />
 				</c:if></td>

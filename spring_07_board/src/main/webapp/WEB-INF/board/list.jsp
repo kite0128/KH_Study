@@ -16,10 +16,9 @@
 	<table>
 		<tr>
 			<th width="5%">번호</th>
-			<th width="45%">제목</th>
+			<th width="70%">제목</th>
 			<th width="20%">글쓴이</th>
-			<th width="15%">IP</th>
-			<th width="5%">조회수</th>
+			<th width="15%">조회수</th>
 		</tr>
 		
 		<c:forEach var="dto" items="${aList}">

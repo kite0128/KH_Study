@@ -44,25 +44,25 @@ public class BoardDaoImp implements BoardDAO {
 
 	@Override
 	public void reStepCount(BoardDTO dto) {
-		// TODO Auto-generated method stub
+		sqlSession.update("board.reStepCount", dto);
 
 	}
 
 	@Override
 	public void save(BoardDTO dto) {
-		sqlSession.insert("board.save",dto);
+		sqlSession.insert("board.save", dto);
 
 	}
 
 	@Override
 	public BoardDTO updateNum(int num) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return sqlSession.selectOne("board.content", num);
 	}
 
 	@Override
 	public void update(BoardDTO dto) {
-		// TODO Auto-generated method stub
+		sqlSession.update("board.update", dto);
 
 	}
 
@@ -74,8 +74,9 @@ public class BoardDaoImp implements BoardDAO {
 
 	@Override
 	public String getFile(int num) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return sqlSession.selectOne("board.uploadFile", num);
+
 	}
 
 }
