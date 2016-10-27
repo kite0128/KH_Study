@@ -39,6 +39,8 @@ insert into tbl_reply values(reply_rno_seq.nextval,1,'댓글내용1','kim',sysda
 insert into tbl_reply values(reply_rno_seq.nextval,1,'댓글내용2','park',sysdate);
 select * from tbl_reply;
 
+alter table tbl_reply add rupload varchar2(1000);
+
 select b.*, r.*
 from tbl_board b, tbl_reply r
 where b.bno=r.bno and b.bno=1;

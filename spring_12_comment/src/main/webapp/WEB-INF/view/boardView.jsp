@@ -2,36 +2,124 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style type="text/css">
+.modifyShow {
+	display: block;
+	position: absolute;
+	top: 150px;
+	left: 200px;
+	width: 400px;
+	height: 150px;
+	z-index: 1000;
+	border: 1px solid black;
+	background-color: yellow;
+	text-align: center;
+}
+
+.modifyHide {
+	visibility: hidden;
+	width: 0px;
+	height: 0px;
+}
+</style>
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
 <script type="text/javascript">
-$(document).ready(function(){
-	$('#replyAddBtn').on('click',process);
-});
+	$(document).ready(function() {
+		$('#modifyModal').addClass('modifyHide');
+		$('#replyAddBtn').on('click', process);
+		$(document).on('click', '.timeline button', reply_update_delete);
+		$('#btnModify').on('click', reply_update_send);
 
-function process(){
-	$.ajax({
-		type:'GET',
-		dataType:'json',//통합방식
-		url:"replyInsertList.do?bno=" + "${boardDTO.bno}" + "&replytext=" + $('#newReplyText').val() + "&replyer=" + $('#newReplyWriter').val(),
-		success:reply
-	});
-}
+		$('#btnClose').on('click', function() {
+			$('#modifyModal').removeClass('modifyShow');
+			$('#modifyModal').addClass('modifyHide');
+			urno = '';
+		});
+	});////////////////////////////////////////////////////////////
 
-function reply(data){
-	$('.timeline').empty();
-	$('.timeline').append('<li class="time_label" id="repliesDiv"><span class="bg-green"> Replies List <small id="replycntSmall"> [ ${fn:length(boardDTO.replyList)} ] </small> </span></li>');
-	$.each(data, function(index,value){
-			$(".timeline").append("<li class='time_sub' id='"+value.rno+"'>" + "<p>"+value.replyer+"</p>" + "<p>"+value.replytext+"</p>" + "<p>"+value.regdate+"</p>" + "<p><a href='replyDelete.do?bno=${boardDTO.bno}&rno=${replyDTO.rno}'>delete</a></p></li>");
+	Handlebars.registerHelper("newDate", function(timeValue) {
+		/* var dataObj = new Date(timeValue);
+		var year = dataObj.getFullYear();
+		var month = dataObj.getMonth()+1;
+		var date = dateObj.getDate(); */
+		return new Date(timeValue);
 	});
-}
+
+	function process() {
+		$.ajax({
+			type : 'GET',
+			dataType : 'json',//통합방식
+			url : "replyInsertList.do?bno=" + "${boardDTO.bno}" + "&replytext="
+					+ $('#newReplyText').val() + "&replyer="
+					+ $('#newReplyWriter').val(),
+			success : reply_list_result
+		});
+	}
+
+	function reply_list_result(data) {
+		$('.timeline').empty();
+		$('.timeline')
+				.append(
+						'<li class="time_label" id="repliesDiv"><span class="bg-green"> Replies List <small id="replycntSmall"> [ ${fn:length(boardDTO.replyList)} ] </small> </span></li>');
+		$
+				.each(
+						data,
+						function(index, value) {
+							/* $(".timeline").append("<li class='time_sub' id='"+value.rno+"'>" 
+									+ "<p>" +value.replyer+"</p>" 
+									+ "<p>"+value.replytext+"</p>" 
+									+ "<p>"+value.regdate+"</p>" 
+									+ "<p><button id="${replyDTO.rno}">delete</button>"
+									+ "<button id="${replyDTO.rno}">update</button></p></li>"); 
+							 */
+
+							var source = "<li class='time_sub' id='{{rno}}'<p>{{replyer}}</p><p>{{replytext}}</p><p>{{newDate regdate}}</p>"
+									+ "<p><button id='{{rno}}'>delete</button><button id='{{rno}}'>update</button></p></li>";
+
+							var template = Handlebars.compile(source);
+							$('.timeline').append(template(value));
+						});
+	}
+
+	function reply_update_delete() {
+		if ($(this).text() == 'delete') {
+			var drno = $(this).prop('id');
+			$.ajax({
+				type : 'GET',
+				dateType : 'json',
+				url : 'replyDelete.do?bno=${boardDTO.bno}&rno=' + drno,
+				success : reply_list_result
+			});
+		} else if ($(this).text() == 'update') {
+			urno = $(this).prop('id');
+			$('#modifyModal').removeClass('modifyHide').addClass('modifyShow');
+			//$('#modifyModal').addClass('modifyShow');
+		}
+	}
+
+	function reply_update_send() {
+		if ($(this).text() == 'Modify') {
+			var text = $('#updateReplyText').val();
+			$.ajax({
+				type : 'GET',
+				dateType : 'json',
+				url : 'replyUpdate.do?bno=${boardDTO.bno}&rno=' + urno
+						+ '&replytext=' + text,
+				success : reply_list_result
+			});
+			$('#modifyModal').removeClass('modifyShow').addClass('modifyHide');
+			urno = '';
+		}
+	}
 </script>
-
 </head>
 <body>
 	<div class="wrap">
@@ -93,9 +181,13 @@ function reply(data){
 				<li class="time_sub" id="${replyDTO.rno}">
 					<p>${replyDTO.replyer}</p>
 					<p>${replyDTO.replytext }</p>
-					<p>${replyDTO.regdate}</p>
 					<p>
-						<a href="replyDelete.do?bno=${boardDTO.bno}&rno=${replyDTO.rno}">delete</a>
+						<fmt:formatDate pattern="yyyy/MM/dd" dateStyle="short"
+							value="${replyDTO.regdate}" />
+					</p>
+					<p>
+						<button id="${replyDTO.rno}">delete</button>
+						<button id="${replyDTO.rno}">update</button>
 					</p>
 
 				</li>
@@ -107,7 +199,19 @@ function reply(data){
 
 			</ul>
 		</div>
+		<!-- Modal -->
+		<div id="modifyModal">
 
+			<p>
+				<label for="updateReplyText">Reply Text</label> <input
+					class="form-control" type="text" placeholder="REPLY TEXT"
+					id="updateReplyText">
+			</p>
+			<p>
+				<button id="btnModify">Modify</button>
+				<button id="btnClose">Close</button>
+			</p>
+		</div>
 	</div>
 </body>
 </html>

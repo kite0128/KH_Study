@@ -104,9 +104,17 @@ public class BoardServiceImp implements BoardService {
 	}// end updateProcess()
 
 	@Override
-	public String deleteProcess(int num, HttpServletRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+	public void deleteProcess(int num, HttpServletRequest request) {
+		String upload = dao.getFile(num);
+		if(upload != null){
+			String root = request.getSession().getServletContext().getRealPath("/");
+			String saveDirectory = root + "temp" + File.separator;
+			File fe = new File(saveDirectory, upload);
+			fe.delete();
+		}
+		
+		dao.delete(num);
+		
 	}
 
 }

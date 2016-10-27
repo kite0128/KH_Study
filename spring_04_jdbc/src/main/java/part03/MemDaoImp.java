@@ -38,28 +38,29 @@ public class MemDaoImp implements MemDao {
 
 	@Override
 	public void insertMethod(MemDTO dto) {
+		sqlSessionTemplate.insert("mem.ins", dto);
 
 	}// end insertMethod()
 
 	@Override
 	public void updateMethod(MemDTO dto) {
-
+		sqlSessionTemplate.update("mem.upt", dto);
 	}// end updateMethod()
 
 	@Override
 	public void deleteMethod(int num) {
-
+		sqlSessionTemplate.delete("mem.del",num);
 	}
 
 	@Override
 	public MemDTO one(int num) {
-		return null;
+		return sqlSessionTemplate.selectOne("mem.one",num);
 
 	}
 
 	@Override
 	public int countMethod() {
-		return 0;
+		return sqlSessionTemplate.selectOne("mem.cnt");
 
 	}
 

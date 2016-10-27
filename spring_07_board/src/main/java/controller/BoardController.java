@@ -144,5 +144,20 @@ public class BoardController {
 		return mav;
 	}
 	
+	@RequestMapping("/delete.sb")
+	public ModelAndView deleteMethod(int num, int currentPage, HttpServletRequest request){
+		ModelAndView mav = new ModelAndView();
+		service.deleteProcess(num, request);
+		
+		PageDTO pv = new PageDTO(service.countProcess());
+		if(pv.getTotalPage()<currentPage)
+			mav.addObject("currentPage",pv.getTotalPage());
+		else
+			mav.addObject("currentPage",currentPage);
+		
+			mav.setViewName("redirect:/list.sb");
+		return mav;
+	}//end deleteMethod()
+	
 
 }// end class

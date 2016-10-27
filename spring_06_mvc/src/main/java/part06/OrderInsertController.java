@@ -21,7 +21,7 @@ public class OrderInsertController {
 	@RequestMapping(value="/orderInsert.htm", method= RequestMethod.POST)
 	public String process(OrderDTO dto){
 		dao.insertMethod(dto);
-		return null;
+		return "redirect:/orderList.htm";
 		
 	}
 

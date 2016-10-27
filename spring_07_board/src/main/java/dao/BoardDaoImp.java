@@ -68,7 +68,7 @@ public class BoardDaoImp implements BoardDAO {
 
 	@Override
 	public void delete(int num) {
-		// TODO Auto-generated method stub
+		sqlSession.delete("board.delete",num);
 
 	}
 
