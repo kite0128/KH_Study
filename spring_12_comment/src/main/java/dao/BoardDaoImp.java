@@ -54,4 +54,10 @@ public class BoardDaoImp implements BoardDao {
 		
 	}
 
+	@Override
+	public String getFile(int rno) {
+		
+		return sqlSession.selectOne("reply.r_downloadFile",rno);
+	}
+
 }

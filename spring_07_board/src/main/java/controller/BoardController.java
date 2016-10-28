@@ -153,8 +153,7 @@ public class BoardController {
 		if(pv.getTotalPage()<currentPage)
 			mav.addObject("currentPage",pv.getTotalPage());
 		else
-			mav.addObject("currentPage",currentPage);
-		
+			mav.addObject("currentPage",currentPage);		
 			mav.setViewName("redirect:/list.sb");
 		return mav;
 	}//end deleteMethod()
