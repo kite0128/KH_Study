@@ -7,7 +7,6 @@ var url=require('url');
 var fs=require('fs');
 
 
-
 //웹 서버 생성
 var server = http.createServer(function(req, resp){
 	var userpath = __dirname + req.url;
@@ -15,7 +14,7 @@ var server = http.createServer(function(req, resp){
 	//console.log(userpath);
 	if(req.url=="/"){
 		resp.writeHeader(200,{'Content-Type':'text/html;charset=UTF-8'});
-        resp.end('<html><body><h1>Hello Image</h1><img src="images/aa.jpg"/></body></html>');
+        resp.end('<html><body><h1>Hello Image</h1><img src="images/aa.jpg" /><img src="images/bb.jpg" /></body></html>');
 		return;
 	}
 
