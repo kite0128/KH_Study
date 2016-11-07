@@ -47,6 +47,7 @@
 		<url-pattern>*.sb</url-pattern>
 	</servlet-mapping>
 	
+	<!-- 정적페이지에서 이미지파일이나 js파일을 사용하기 위해선 맵핑을 해줘야 한다. -->
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>*.css</url-pattern>

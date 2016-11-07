@@ -101,6 +101,7 @@
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/view/" />
 		<property name="suffix" value=".jsp" />
+		<property name="order" value="2"/> <!-- 우선순위값 주기 -->
 	</bean>
 	
 </beans>

@@ -44,13 +44,14 @@ public class BoardController {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("boardDTO", service.boardViewProcess(bno));
 		// mav.setViewName("boardView");
-		mav.setViewName("boardView2");
+		mav.setViewName("boardView3");
 		return mav;
 	}// end boardViewPage()
 
 	@RequestMapping("/replyInsertList.do")
 	public @ResponseBody List<ReplyDTO> replyListPage(ReplyDTO rdto, HttpServletRequest request) {
-		if (rdto.getRupload() != null) {
+		
+		if (rdto.getFilename() != null) {
 			MultipartFile file = rdto.getFilename();
 			if (!file.isEmpty()) {
 				String fileName = file.getOriginalFilename();
@@ -83,13 +84,13 @@ public class BoardController {
 	}// end replyListPage()
 
 	@RequestMapping("/replyDelete.do")
-	public @ResponseBody List<ReplyDTO> replyDeleteListPage(ReplyDTO rdto) {
-		return service.replyDeleteProcess(rdto);
+	public @ResponseBody List<ReplyDTO> replyDeleteListPage(ReplyDTO rdto, HttpServletRequest req) {
+		return service.replyDeleteProcess(rdto, req);
 	}// END replyDeleteListPage()
 
 	@RequestMapping("/replyUpdate.do")
-	public @ResponseBody List<ReplyDTO> replyUpdateListPage(ReplyDTO rdto) {
-		return service.replyUpdateProcess(rdto);
+	public @ResponseBody List<ReplyDTO> replyUpdateListPage(ReplyDTO rdto, HttpServletRequest req) {
+		return service.replyUpdateProcess(rdto, req);
 	}// end replyUpdateListPage()
 
 	@RequestMapping("/contentdownload.do")

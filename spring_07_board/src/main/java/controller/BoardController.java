@@ -35,8 +35,11 @@ public class BoardController {
 
 	@RequestMapping("/list.sb")
 	public ModelAndView listMethod(PageDTO pv) {
-
+		//객체로 받으면 첫 접속일때 null값이어도 오류가 없다.(내부에서 0으로 처리)
+		//객체로 받지 않으면 null 오류가 떠서 if를 사용해서 page초기값을 지정해야 한다.
 		ModelAndView mav = new ModelAndView();
+		
+		//게시판 테이블의 총 레코드
 		int totalRecord = service.countProcess();
 		if (totalRecord >= 1) {
 			if (pv.getCurrentPage() == 0)

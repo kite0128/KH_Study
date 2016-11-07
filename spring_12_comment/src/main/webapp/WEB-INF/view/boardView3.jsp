@@ -27,11 +27,20 @@
 	width: 0px;
 	height: 0px;
 }
+
+.fileDrop{
+	width:200px;
+	height:50px;
+	border:1px dotted blue;
+}
 </style>
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
 <script type="text/javascript">
+	var urno='';
+	var fileList='';
+
 	$(document).ready(function() {
 		$('#modifyModal').addClass('modifyHide');
 		$('#replyAddBtn').on('click', process);
@@ -43,35 +52,58 @@
 			$('#modifyModal').addClass('modifyHide');
 			urno = '';
 		});
+		
+		//내PC 첨부파일 시작
+		var userfile='';
+		$('#userpc').on('click',function(){
+			var userfile=$('<input type="file" id="userfile"/>');
+			userfile.click();
+			userfile.change(function(e){
+				console.log($(userfile[0]).val());
+				var partname=$(userfile[0]).val().substring($(userfile[0]).val().lastIndexOf("\\")+1);
+				str="<p style='background-color:skyblue'>"+partname+"</p>";
+				$(".fileDrop").append(str);
+				var dataList=userfile[0].files;
+				fileList=dataList[0];
+			});
+		});
+		//내PC 첨부파일 끝
+		
+		//첨부파일 드래그 시작
+		var obj=$('.fileDrop');
+		obj.on('dragenter',function(e){
+			e.preventDefault();
+			$(this).css('border','2px solid #0B85A1');
+		});
+		
+		obj.on('dragover',function(e){
+			e.preventDefault();
+		});//
+		
+		obj.on('drop',function(e){
+			e.preventDefault();
+			//input type=file를 해주지 않았기 때문에 해주는 작업
+			var files=e.originalEvent.dataTransfer.files;
+			for(var i=0; i<files.length; i++){
+				str='<p style="background-color:yellow">'+files[i].name+'</p>';
+				obj.append(str);
+				fileList=files[i];
+			}
+		});//첨부파일 드래그 끝///
+		
 	});////////////////////////////////////////////////////////////
 
 	Handlebars.registerHelper("newDate", function(timeValue) {
-		var dataObj = new Date(timeValue);
+		/* var dataObj = new Date(timeValue);
 		var year = dataObj.getFullYear();
-		var month = dataObj.getMonth() + 1;
-		var date = dateObj.getDate();
-		return year + "/" + month + "/" + date;
-		//return new Date(timeValue);
+		var month = dataObj.getMonth()+1;
+		var date = dateObj.getDate(); */
+		return new Date(timeValue);
 	});
-
-	Handlebars.registerHelper("newUpload", function(rno, uploadFile) {
-	/* 	if (uploadFile != null) {
-
-			var filename = uploadFile.substring(uploadFile.indexOf("_") + 1);
-			var ddd = '<a href="download.do?rno=' + rno + '">'
-					+ uploadFile.substring(uploadFile.indexOf("_") + 1)
-					+ '</a>';
-
-			return new Handlebars.SafeString(ddd);
-		} else {
-			return "첨부파일 없음";
-		}
-
-	}); */
 	
-	Handlebars.registerHelper("newUpload", function(uploadFile) {
-		if (uploadFile != null)
-			return uploadFile.substring(uploadFile.indexOf("_") + 1);
+	Handlebars.registerHelper("newUpload",function(uploadFile){
+		if(uploadFile!=null)
+			return uploadFile.substring(uploadFile.indexOf("_")+1);
 		else
 			return uploadFile;
 	});
@@ -79,11 +111,14 @@
 	function process() {
 		var form_data = new FormData();
 		form_data.append('bno', '${boardDTO.bno}');
-		form_data.append('replyer', $('#newReplyWriter').val());
-		form_data.append('replytext', $('#newReplyText').val());
-
-		if ($('#filename')[0].files[0] != undefined)
-			form_data.append('filename', $('#filename')[0].files[0]);
+		form_data.append('replyer',$('#newReplyWriter').val());
+		form_data.append('replytext',$('#newReplyText').val());
+		/* console.log('filename',$('#filename')[0].files[0]);
+		if($('#filename')[0].files[0]!=undefined)
+			form_data.append('filename',$('#filename')[0].files[0]); */
+		if(fileList!=''){
+			form_data.append('filename',fileList);
+		}
 
 		//첨부파일이 있을 때만
 		$.ajax({
@@ -99,22 +134,18 @@
 			data : form_data,
 			success : reply_list_result
 		});
-
+		
 		$('#newReplyWriter').val('');
 		$('#newReplyText').val('');
-		$('#filename').val('');
+		$('.fileDrop').empty('');
+		fileList='';
 	}
 
 	//json으로 받은 값은 템플릿을 이용해서 넣어줄 수 있음
 	function reply_list_result(data) {
 		$('.timeline').empty();
-		$('.timeline')
-				.append(
-						'<li class="time_label" id="repliesDiv"><span class="bg-green"> Replies List <small id="replycntSmall"> [ ${fn:length(boardDTO.replyList)} ] </small> </span></li>');
-		$
-				.each(
-						data,
-						function(index, value) {
+		$('.timeline').append('<li class="time_label" id="repliesDiv"><span class="bg-green"> Replies List <small id="replycntSmall"> [ ${fn:length(boardDTO.replyList)} ] </small> </span></li>');
+		$.each(data,function(index, value) {
 							/* $(".timeline").append("<li class='time_sub' id='"+value.rno+"'>" 
 									+ "<p>" +value.replyer+"</p>" 
 									+ "<p>"+value.replytext+"</p>" 
@@ -147,9 +178,12 @@
 		}
 	}
 
-	function reply_update_send() {
+	/* function reply_update_send() {
 		if ($(this).text() == 'Modify') {
 			var text = $('#updateReplyText').val();
+			
+			
+			
 			$.ajax({
 				type : 'GET',
 				dateType : 'json',
@@ -160,7 +194,35 @@
 			$('#modifyModal').removeClass('modifyShow').addClass('modifyHide');
 			urno = '';
 		}
+	} */
+	
+	function reply_update_send() {
+
+		var update_data = new FormData();
+		update_data.append('bno', '${boardDTO.bno}');
+		update_data.append('rno', urno);
+		update_data.append('replytext', $('#updateReplyText').val());
+		if ($('#refilename')[0].files[0] != undefined) {
+			update_data.append('filename', $('#refilename')[0].files[0]);
+		}
+		$.ajax({
+			type : 'POST',
+			dataType : 'json',
+			contentType : false,
+			enctype : 'multipart/form-data',
+			processData : false,
+			url : 'replyUpdate.do',
+			data : update_data,
+			success : reply_list_result
+
+		});
+		$('#updateReplyText').val('');
+		$('#modifyModal').removeClass('modifyShow');
+		$('#modifyModal').addClass('modifyHide');
+
 	}
+	
+	
 </script>
 </head>
 <body>
@@ -200,7 +262,10 @@
 					class="form-control" type="text" placeholder="USER ID"
 					id="newReplyWriter"> <label for="exampleInputEmail1">ReplyText</label>
 				<input class="form-control" type="text" placeholder="REPLY TEXT"
-					id="newReplyText"> 
+					id="newReplyText"> <!-- <label for="filename">Upload</label> <input
+					type="file" id="filename" name="filename" /> -->
+					<div><span id="userpc" style="cursor:pointer">내PC</span></div>
+					<div class="fileDrop"></div>
 
 			</div>
 			<!-- /.box-body -->
@@ -227,15 +292,14 @@
 						<fmt:formatDate pattern="yyyy/MM/dd" dateStyle="short"
 							value="${replyDTO.regdate}" />
 					</p>
-					<p>
-						<c:if test="${!empty replyDTO.rupload}">
-							<a href="contentdownload.do?rno=${replyDTO.rno}">
-								${fn:substringAfter(replyDTO.rupload,"_")} </a>
-						</c:if>
-						<c:if test="${empty replyDTO.rupload}">
-							<c:out value="첨부파일 없음" />
-						</c:if>
-					</p>
+					<p><c:if test="${!empty replyDTO.rupload}">
+						<a href="contentdownload.do?rno=${replyDTO.rno}">
+						${fn:substringAfter(replyDTO.rupload,"_")}
+						</a>
+					</c:if>
+					<c:if test="${empty replyDTO.rupload}">
+						<c:out value="첨부파일 없음"/>
+					</c:if></p>
 					<p>
 						<button id="${replyDTO.rno}">delete</button>
 						<button id="${replyDTO.rno}">update</button>
@@ -258,12 +322,12 @@
 					class="form-control" type="text" placeholder="REPLY TEXT"
 					id="updateReplyText">
 			</p>
-
+			
 			<p>
 				<label for="filename">Upload</label> <input type="file"
 					id="refilename" name="filename">
 			</p>
-
+			
 			<p>
 				<button id="btnModify">Modify</button>
 				<button id="btnClose">Close</button>
